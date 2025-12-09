@@ -1,10 +1,45 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useState } from "react";
+import validator from "validator";
 
 export default function RegisterScreen() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleRegister = async () => {
+    if (!validator.isEmail(email)) {
+      Alert.alert("Error", "El email no es válido.");
+      return;
+    }
+    if (!validator.isStrongPassword(password)) {
+      Alert.alert("Error", "La contraseña no es segura!!!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://IP_DEL_PROFESOR/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullname: fullName,
+          email: email,
+          pswd: password,
+        }),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -24,6 +59,10 @@ export default function RegisterScreen() {
         value={password}
         onChangeText={setPassword}
       />
+
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Registrarse</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -48,5 +87,17 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 12,
     marginBottom: 20,
+  },
+  registerButton: {
+    backgroundColor: "#007bff",
+    borderRadius: 20,
+    padding: 15,
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
