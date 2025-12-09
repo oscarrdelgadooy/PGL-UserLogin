@@ -9,6 +9,8 @@ import {
 import React, { useState } from "react";
 import validator from "validator";
 import { router } from "expo-router";
+import { registerUser } from "../service/Api";
+import { RegisterData } from "../types/api_types/RegisterType";
 
 export default function RegisterScreen() {
   const [fullName, setFullName] = useState("");
@@ -25,31 +27,25 @@ export default function RegisterScreen() {
       return;
     }
 
+    const userData: RegisterData = {
+      fullname: fullName,
+      email,
+      pswd: password,
+    };
+
     try {
-      const response = await fetch("http://IP_DEL_PROFESOR/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullname: fullName,
-          email: email,
-          pswd: password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert("Succesful", `Acoount created! Hello ${data.fullname} :)`)
+      const data = await registerUser(userData);
+      if (data.ok) {
+        Alert.alert("Succesful", `Account created! Hello ${fullName}!)`);
+        setFullName("")
+        setEmail("")
+        setPassword("")
         router.push("./(drawer)/welcome");
       }
-
-      if (response.status === 400) {
+      if (data.status === 400) {
         Alert.alert("Error", "Incorrect data...");
       }
-
-      if (response.status === 409) {
+      if (data.status === 409) {
         Alert.alert("Error", "Email already exists...");
       }
     } catch (error) {
