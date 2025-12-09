@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import validator from "validator";
+import { router } from "expo-router";
 
 export default function RegisterScreen() {
   const [fullName, setFullName] = useState("");
@@ -36,6 +37,21 @@ export default function RegisterScreen() {
           pswd: password,
         }),
       });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Succesful", `Acoount created! Hello ${data.fullname} :)`)
+        router.push("./(drawer)/welcome");
+      }
+
+      if (response.status === 400) {
+        Alert.alert("Error", "Incorrect data...");
+      }
+
+      if (response.status === 409) {
+        Alert.alert("Error", "Email already exists...");
+      }
     } catch (error) {
       console.log(error);
     }
