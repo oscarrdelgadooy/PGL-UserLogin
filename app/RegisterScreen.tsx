@@ -53,6 +53,12 @@ export default function RegisterScreen() {
     }
   };
 
+    const move =  () => {
+    
+        router.push("./LoginScreen");
+
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create Account</Text>
@@ -72,7 +78,7 @@ export default function RegisterScreen() {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+      <TouchableOpacity style={styles.registerButton} onPress={move}>
         <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
     </View>
