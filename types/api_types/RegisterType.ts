@@ -4,11 +4,7 @@ export type RegisterData = {
   pswd: string;
 };
 
-export type RegisterResponse = {
-  ok: boolean;
-  status: number;
-  data: {
-    message: string;
-    token?: string;
-  };
+export type LoginData = {
+  email: string;
+  pswd: string;
 };

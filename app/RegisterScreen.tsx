@@ -37,10 +37,10 @@ export default function RegisterScreen() {
       const data = await registerUser(userData);
       if (data.ok) {
         Alert.alert("Succesful", `Account created! Hello ${fullName}!)`);
-        setFullName("")
-        setEmail("")
-        setPassword("")
-        router.push("./(drawer)/welcome");
+        setFullName("");
+        setEmail("");
+        setPassword("");
+        router.push("./LoginScreen");
       }
       if (data.status === 400) {
         Alert.alert("Error", "Incorrect data...");
@@ -53,10 +53,8 @@ export default function RegisterScreen() {
     }
   };
 
-    const move =  () => {
-    
-        router.push("./LoginScreen");
-
+  const movetoLogin = () => {
+    router.push("./LoginScreen");
   };
 
   return (
@@ -78,8 +76,12 @@ export default function RegisterScreen() {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.registerButton} onPress={move}>
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.buttonText}>Registrarse</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.registerButton} onPress={movetoLogin}>
+        <Text style={styles.buttonText}>Logearse</Text>
       </TouchableOpacity>
     </View>
   );
