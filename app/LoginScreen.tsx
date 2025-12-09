@@ -1,11 +1,31 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useState } from "react";
+import validator from "validator";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  
+  const handleLogin = () => {
+    if (!validator.isEmail(email)) {
+      Alert.alert("Error", "El email no es válido.");
+      return;
+    }
+    if (!validator.isStrongPassword(password)) {
+      Alert.alert("Error", "La contraseña no es segura!!!");
+      return;
+    }
+
+
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Iniciar Sesión</Text>
@@ -24,6 +44,10 @@ export default function LoginScreen() {
         value={password}
         onChangeText={setPassword}
       />
+
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Entrar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -49,5 +73,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
   },
-
+  button: {
+    width: "100%",
+    padding: 14,
+    backgroundColor: "#007AFF",
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
