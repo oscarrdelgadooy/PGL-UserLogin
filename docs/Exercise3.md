@@ -1,48 +1,65 @@
-# 📘 README — Pantalla bienvenida.
+# 📘 README — Autenticación y manejo de token.
 
-Para realizar este ejercicio únicamente tenemos que añadir una nueva pantalla en la ruta **app/(drawer)/Welcome.tsx**, ya que al añadir un nuevo documento ahí, se crea automáticamente una pestaña en el Drawer. Para que esto funcione, necesita que tenga un export default function el componente.
+## AuthChecker: Componente que verifica la existencia del token al iniciar la app y redirige según el estado de autenticación:
+- **Servicio `AuthStorage`**:
+  - `saveToken(token: string)`: guarda el token JWT en el almacenamiento interno.
+  - `getToken()`: obtiene el token almacenado.
+  - `removeToken()`: elimina el token al hacer logout.
+
+ Si hay token → muestra el drawer con las pantallas protegidas.
+
+ Si no hay token → redirige a la pantalla de login.
+
+- **Componente `AuthChecker`**:
+  - Verifica la existencia del token al iniciar la app.
+  - Redirige a `/LoginScreen` si no hay token.
+  - Redirige a `/(drawer)/welcome` si hay token.
+- **Pantalla inicial (`index.tsx`)**:
+  - Reemplazada para usar `AuthChecker` como punto de entrada.
+- **Seguridad de navegación**:
+  - Solo permite acceder a pantallas como por ejemplo `(drawer)` si el token existe.
+
+---
 
 ```js
-import { View, Text, Button, StyleSheet, Image } from "react-native";
+import React, { useEffect } from "react";
+import { View, Text } from "react-native";
+import { getToken } from "../service/AuthStorage";
 import { router } from "expo-router";
 
-export default function WelcomeScreen() {
-  const handleNavigateToPortfolio = () => {
-    router.replace("/(drawer)/(tabs)/user-info");
-  };
+const AuthChecker = () => {
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await getToken();
+
+      if (!token) {
+        router.replace("/LoginScreen");
+      } else {
+        router.replace("/(drawer)/welcome");
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>¡Bienvenido User!</Text>
-
-      <Image
-        source={require("../../assets/SofyanAmrabat.jpg")}
-        style={styles.welcomeImage}
-      />
-
-      <Text style={styles.message}>
-        Este es Adrian, el + guapo de todos que me va a aprobar la práctica. :D
-      </Text>
-
-      <Button title="Ver mi Portfolio" onPress={handleNavigateToPortfolio} />
+    <View>
+      <Text>Not logged.</Text>
     </View>
   );
-}
-```
-
-Es una pantalla básica, que muestra un texto de bienvenida, una imagen y una descripción to chula. He creado una función **handleNavigateToPortfolio**:
-
-```js
-const handleNavigateToPortfolio = () => {
-  router.replace("/(drawer)/(tabs)/user-info");
 };
 
-///
-
-<Button title="Ver mi Portfolio" onPress={handleNavigateToPortfolio} />;
+export default AuthChecker;
 ```
 
-Cuando hago click en el botón, llamo a la función **handleNavigateToPortfolio** que con router.replace(), reemplaza la pantalla actual en la pila de navegación por una nueva pantalla, en lugar de simplemente agregar la nueva pantalla encima y me redirige a **app/(drawer)/(tabs)/user-info**
+Se coloca como pantalla inicial (app/index.tsx) para que siempre se verifique la sesión al abrir la app.
 
+## Flujo de navegación
+
+* Usuario abre la app → AuthChecker verifica token.
+
+* Token existe → redirige al drawer (/(drawer)/welcome).
+
+* Token no existe → redirige a LoginScreen.
 
 [Volver](../README.md)
