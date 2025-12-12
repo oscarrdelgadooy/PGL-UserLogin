@@ -1,9 +1,15 @@
 import { View, Text, Button, StyleSheet, Image } from "react-native";
 import { router } from "expo-router";
+import { authStorageService } from "../../service/AuthStorage";
 
 export default function WelcomeScreen() {
   const handleNavigateToPortfolio = () => {
     router.replace("/RegisterScreen");
+  };
+
+  const logOff = async () => {
+    await authStorageService.removeToken();
+    router.replace("/LoginScreen");
   };
 
   return (
@@ -18,6 +24,8 @@ export default function WelcomeScreen() {
       <Text style={styles.message}>
         Este es Adrian, el + guapo de todos que me va a aprobar la práctica. :D
       </Text>
+
+      <Button title="Cerrar sesión" onPress={logOff} />
 
       <Button title="Ver mi Portfolio" onPress={handleNavigateToPortfolio} />
     </View>
