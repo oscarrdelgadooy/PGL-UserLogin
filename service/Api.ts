@@ -27,9 +27,7 @@ export const registerUser = async (
   }
 };
 
-export const loginUser = async (
-  userData: LoginData
-): Promise<LoginResult | undefined> => {
+export const loginUser = async (userData: LoginData): Promise<LoginResult | null> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
@@ -42,5 +40,6 @@ export const loginUser = async (
     return data;
   } catch (error) {
     console.log(error);
+    return null;
   }
 };

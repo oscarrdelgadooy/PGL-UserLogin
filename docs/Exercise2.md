@@ -1,181 +1,229 @@
-# 📘 README — Reciclar Portfolio App
+# 📘 README — Crea una pantalla de inicio de sesión
 
-Para realizar este ejercicio, he tenido que crear primero lo que sería la pantalla principal para navegar entre el drawer. He creado otro grupo (tabs) que representa la pantalla completa con el tabs únicamente para esa, que contendrá mis otras dos pantallas de la lista de Hobbies y la del QR.
+En este apartado vamos a crear una pantalla de login para nuestra app, controlado a través de tokens JWT.
 
-Debemos de seguir esta estructura de carpetas dentro del drawer:
+## Diseño
 
-```
-app/
- ├─ (drawer)/
-    ├─ _layout.tsx
-    └─ (tabs)/
-       ├─ _layout.tsx  
-       ├─ codeQr.tsx     
-       └─ user-info.tsx  
-```
+Mi pantalla tiene un aspecto básico para el test de la app.
 
-## app/(drawer)/_layout.tsx
+![alt text](image-3.png)
 
-Tenemos que cambiar en la estructura del drawer, cada <Drawer.Screen> representa una pestaña personalizada (por decirlo así) dentro de lo visual del drawer que abre una pantalla nueva. Añadimos la pestaña de tabs (name="(tabs)" abre todo el grupo). Las demás pestañan se añaden automáticamente al crear el archivo .tsx con su correspondiente export default function.
+Al hacer click a "Entrar" llama a un método que válida los inputs `(email y pswd)`. Una vez son validados, llama a la api:
 
 ```js
-import { Drawer } from "expo-router/drawer";
+export default function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-export default function DrawerLayout() {
-  return (
-    <Drawer screenOptions={{ headerTitle: "" }}>
-      <Drawer.Screen
-        name="(tabs)"
-        options={{
-          title: "Portfolio App",
-        }}
-      />
-    </Drawer>
-  );
-}
+  const handleLogin = async () => {
+    if (!validator.isEmail(email)) {
+      Alert.alert("Error", "El email no es válido.");
+      return;
+    }
+    if (!validator.isStrongPassword(password)) {
+      Alert.alert("Error", "La contraseña no es segura!!!");
+      return;
+    }
 
+    const userData: LoginData = {
+      email,
+      pswd: password,
+    };
+
+    try {
+      const data = await loginUser(userData);
+
+      console.log("Respuesta login:", data);
+
+      if (data?.object == null) {
+        Alert.alert("error", `Not logged, invalid user or password.`);
+        return;
+      }
+
+      if (data?.object.token != null) {
+        await saveToken(data?.object.token);
+        Alert.alert("Succesful", `Logged! Your token: \n${data.object.token}`);
+        setEmail("");
+        setPassword("");
+
+        router.push("./(drawer)/welcome");
+      }
+
+      if (data?.object.status === 400) {
+        Alert.alert("Error", "Incorrect data...");
+      }
+      if (data?.object.status === 401) {
+        Alert.alert("Error", "Email or password wrong...");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 ```
 
-## app/(drawer)/(tabs)/_layout.tsx
+Al llamar a la api, recojo la información que me devuelve el endpoint y compruebo que me ha devuelto el token para confirmar si ha sido correcto el login.
 
-Primero tendremos que importar la librería de los iconos.
+Sino, compruebo el código de error y muestro por consola los errores.
 
-```
-expo install @expo/vector-icons
-```
+---
+
+Para enviar los datos al endpoint de la api, me he creado un tipo en mis `/api_types/RegisterType.ts` para decir que esos son los datos que envío.
 
 ```js
-import { Tabs } from "expo-router";
-import { StyleSheet } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
-
-export default function TabsLayout() {
-  return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarPosition: "bottom",
-      }}
-    >
-      <Tabs.Screen
-        name="user-info"
-        options={{
-          title: "Mi Info",
-          tabBarIcon: () => (
-            <Ionicons name="person-circle-outline" size={30} color={"#000"}  />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="codeQr"
-        options={{
-          title: "Mi Qr",
-          tabBarIcon: () => (
-            <Ionicons name="qr-code" size={30} color={"#000"}  />
-          ),
-        }}
-      />
-    </Tabs>
-  );
-}
-
-const headerStyles = StyleSheet.create({});
+const userData: LoginData = {
+  email,
+  pswd: password,
+};
 ```
 
-Este componente nos añade el tab a nuestra pantalla. Que navega entre las dos pantallas de Información y el código QR.
 
-## app/(drawer)/(tabs)/codeQR.tsx
+---
 
-Esta pantalla nos muestra el código QR del Github de nuestro queridísimo profesor Adrián.
+Luego, controlo la respuesta de la api,
 
 ```js
-import { StyleSheet, View } from "react-native";
-import React from "react";
-import QRCode from "react-native-qrcode-svg";
+try {
+      const data = await loginUser(userData);
 
-export default function codeQr() {
-  return (
-    <View style={styles.bodyStyles}>
-      <View style={styles.centerQR}>
-        <QRCode value="https://github.com/adhernea" />
-      </View>
-    </View>
-  );
-}
+      console.log("Respuesta login:", data);
+
+      if (data?.object == null) {
+        Alert.alert("error", `Not logged, invalid user or password.`);
+        return;
+      }
+
+      if (data?.object.token != null) {
+        await saveToken(data?.object.token);
+        Alert.alert("Succesful", `Logged! Your token: \n${data.object.token}`);
+        setEmail("");
+        setPassword("");
+
+        router.push("./(drawer)/welcome");
+      }
+
+      if (data?.object.status === 400) {
+        Alert.alert("Error", "Incorrect data...");
+      }
+      if (data?.object.status === 401) {
+        Alert.alert("Error", "Email or password wrong...");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 ```
 
-## app/(drawer)/(tabs)/user-info.tsx
+Al llamar a la api, puede dar posibles resultados, el primero es que se haya mandado la petición y no se hayan validado correctamente los campos (email y pswd).
 
-Esta pantalla nos muestra la información del usuario, con una pequeña descripción y una lista de actividades que el usuario ha elegido.
+![alt text](image-4.png)
 
-Tenemos una lista estática de actividades que mapeamos para mostrar una a una.
+![alt text](image-5.png)
+
+---
+
+Al logearnos correctamente, para comprobar lo que nos devuelve, abrimos el Postman y comprobamos las respuestas del endpoint.
+
+![alt text](image-8.png)
+
+Aqui podemos comprobar que un logeo exitoso nos devuelve el token, userId y el código. Al logearnos exitosamente, guardamos el token en nuestro almacenamiento local para la sesión.
 
 ```js
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import Description from "../../../components/Description";
+if (data?.object.token != null) {
+  await saveToken(data?.object.token);
+  Alert.alert("Succesful", `Logged! Your token: \n${data.object.token}`);
+  setEmail("");
+  setPassword("");
 
-
-export default function App() {
-  const activities = [
-    "Senderismo",
-    "Ir a la playita",
-    "Domingos de misa",
-    "La guitarrita",
-    "El monte con lluvia",
-    "Viajar",
-    "Música variadita",
-    "Anime",
-    "Ducharme",
-    "Videojuegos",
-  ];
-  return (
-    <View style={styles.container}>
-      <Text style={styles.firstTopRowContainer}>My Portfolio App</Text>
-      <View style={styles.bodyStyles}>
-        <View>
-          <View>
-            <Description></Description>
-          </View>
-          <Text style={styles.listActivities}>Cosas que me gustan mucho:</Text>
-          <ScrollView style={{ padding: 10 }}>
-            {activities.map((activity) => (
-              <Text key={activity} style={styles.stylePerActivity}>
-                {activity}
-              </Text>
-            ))}
-          </ScrollView>
-        </View>
-      </View>
-    </View>
-  );
+  router.push("./(drawer)/welcome");
 }
 ```
 
-También importarmos el componente Description.
+Al ser el login exitoso (compruebo que el token exista para ver si fue exitoso), guardamos el token en nuestro almacenamiento y redirigimos al usuario a la pantalla Welcome.
+
+![alt text](image-9.png)
+
+---
+
+Otro posible resultado es que ya al haber introducido correctamente los datos, la petición sale errónea.
+
+![alt text](image-6.png)
+
+Para comprobar este error hay que ver lo que devuelve el endpoint de la api. Para ello vamos a ir al Postman y ver que posibles resultados hay.
+
+![alt text](image-7.png)
+
+Al tener ya previamente creada la cuenta, y nos intentamos logear y es erróneo el login, vemos que no nos devuelve el cuerpo de un login exitoso.
 
 ```js
-import { Image, StyleSheet, Text, View } from "react-native";
-import React from "react";
+if (data?.object == null) {
+  Alert.alert("error", `Not logged, invalid user or password.`);
+  return;
+}
+```
 
-const Description = () => {
-  return (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Image
-        style={styles.avatar}
-        source={require("../assets/SofyanAmrabat.jpg")}
-      ></Image>
-      <View style={styles.infoLabel}>
-        <Text style={styles.textInfo}>Descripción sobre mí!</Text>
-        <Text>
-          Soy profe y me gusta mi trabajo aunque a veces me de por enrevesar
-          prácticas para mis queridos alumnos
-        </Text>
-      </View>
-    </View>
-  );
+Entonces, para comprobar que el login no ha sido exitoso, comprobamos si la petición devuelve el cuerpo, sino es que no ha sido exitoso.
+
+---
+
+## Uso de AsyncStorage para almacenar el token
+
+Este servicio utiliza @react-native-async-storage/async-storage para guardar el token de sesión de forma persistente en el dispositivo móvil. Esto permite que el usuario permanezca autenticado aunque cierre la app.
+
+Funcionalidades implementadas
+
+- Guardar token
+
+```js
+export const saveToken = async (token: string): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(TOKEN_KEY, token);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-export default Description;
+// Para llamarlo
+
+await saveToken(token);
 ```
+
+Guarda el token recibido tras un login exitoso en el almacenamiento interno.
+
+- Obtener token
+
+```js
+export const getToken = async (): Promise<string | null> => {
+  try {
+    return await AsyncStorage.getItem(TOKEN_KEY);
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+// Para llamarlo
+
+const token = await getToken();
+```
+
+Recupera el token almacenado para usarlo en peticiones autenticadas.
+
+- Eliminar token
+
+```js
+export const removeToken = async (): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(TOKEN_KEY);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Para llamarlo
+
+await removeToken();
+```
+
+Borra el token del almacenamiento al cerrar sesión.
 
 [Volver](../README.md)

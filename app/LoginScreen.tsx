@@ -35,14 +35,22 @@ export default function LoginScreen() {
     try {
       const data = await loginUser(userData);
 
+      console.log("Respuesta login:", data);
+
+      if (data?.object == null) {
+        Alert.alert("error", `Not logged, invalid user or password.`);
+        return;
+      }
+
       if (data?.object.token != null) {
-        Alert.alert("Succesful", `Logged!`);
+        await saveToken(data?.object.token);
+        Alert.alert("Succesful", `Logged! Your token: \n${data.object.token}`);
         setEmail("");
         setPassword("");
-        router.push("./(drawer)/welcome");
 
-        await saveToken(data?.object.token );
+        router.push("./(drawer)/welcome");
       }
+
       if (data?.object.status === 400) {
         Alert.alert("Error", "Incorrect data...");
       }
