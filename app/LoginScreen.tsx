@@ -35,13 +35,14 @@ export default function LoginScreen() {
     try {
       const token = await authApiService.loginUser(userData);
 
-      console.log("User Token:", token);
-
+      
       if (token == "" || token == null) {
         Alert.alert("Error", `Not logged, invalid user or password.`);
         return;
       }
-
+      
+      console.log("User Token:", token);
+      
       await authStorageService.saveToken(token);
       Alert.alert("Succesful", `Logeado\n Mastodonte Crack Titán Guapo!`);
 

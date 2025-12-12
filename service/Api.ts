@@ -34,7 +34,15 @@ const loginUser = async (userData: LoginData): Promise<string> => {
 
     const data = await response.json();
 
-    return data.object.token;
+    if (response.ok) {
+      if (data.object.token) {
+        return data.object.token;
+      } else {
+        return "";
+      }
+    }
+
+    return "";
   } catch (error) {
     console.log(error);
     return "";
