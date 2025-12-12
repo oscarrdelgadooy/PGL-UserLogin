@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import validator from "validator";
-import { LoginData } from "../types/api_types/RegisterType";
+import { LoginData } from "../types/api_types/ApiTypes";
 import { router } from "expo-router";
 import { authStorageService } from "../service/AuthStorage";
 import { authApiService } from "../service/Api";
@@ -27,22 +27,16 @@ export default function LoginScreen() {
       return;
     }
 
-    const userData: LoginData = {
-      email,
-      pswd: password,
-    };
-
     try {
-      const token = await authApiService.loginUser(userData);
+      const token = await authApiService.loginUser(email, password);
 
-      
       if (token == "" || token == null) {
         Alert.alert("Error", `Not logged, invalid user or password.`);
         return;
       }
-      
+
       console.log("User Token:", token);
-      
+
       await authStorageService.saveToken(token);
       Alert.alert("Succesful", `Logeado\n Mastodonte Crack Titán Guapo!`);
 

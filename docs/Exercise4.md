@@ -4,9 +4,9 @@ Para cerrar la sesión del usuario, he creado un botón en la pantalla welcome. 
 
 ```js
 const logOff = async () => {
-    await authStorageService.removeToken();
-    router.replace("/LoginScreen");
-  };
+  await authStorageService.removeToken();
+  router.replace("/LoginScreen");
+};
 ```
 
 

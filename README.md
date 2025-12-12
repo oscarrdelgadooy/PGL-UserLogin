@@ -45,35 +45,55 @@ npm run start
 PGL-UserLogin/
 │
 ├─ app/
-│  ├─ (drawer)/welcome.tsx     
-│  └─ register.tsx 
+│  ├─ (drawer)/welcome.tsx // Reciclada de prácticas anteriores.
+│  ├─ LoginScreen.tsx
+│  ├─ RegisterScreen.tsx 
+│  └─ index.tsx
 │
 ├─ services/
-│  └─ api.ts  
+│  ├─ Api.ts  
+│  └─ AuthStorage.ts
 │
 ├─ types/
-│  ├─ CartProduct.ts  
-│  ├─ Producto.ts
 │  └─ api_types/
-│     └─ RegisterType.ts 
+│     └─ ApiTypes.ts 
 │
+├─ docs/
+│   └─ ... // Docs de la práctica
 ├─ package.json
 └─ README.md
+...
 ```
 
 ## Flujo de la aplicación
 
 1. Registro: el usuario introduce sus datos, se valida el email y la contraseña, se envían a la API y se muestra el resultado.
 
-2. Login: el usuario introduce email y contraseña, se valida y se envía a la API; si es correcto, se guarda el token en AsyncStorage.
+2. Login: el usuario introduce email y contraseña, se valida y se envía a la API. Si es correcto, se guarda el token en AsyncStorage.
 
 3. Pantalla de bienvenida: accesible solo si hay token; incluye botón que llama al endpoint de bienvenida.
 
 4. Cierre de sesión: elimina el token y redirige al login.
 
-## Tipos de datos
+## Tipos de datos - types/api_types/ApiTypes.ts
 
-* `api_types/RegisterType.ts` → define la estructura de los datos necesarios para el registro (`fullname`, `email`, `pswd`).
+```js
+export type RegisterData = { // Define la estructura de los datos necesarios para el JSON del registro (fullname, email, pswd).
+  fullname: string;
+  email: string;
+  pswd: string;
+};
+
+export type LoginData = { // Define el cuerpo del JSON que enviamos para logearnos.
+  email: string;
+  pswd: string;
+};
+
+export type WelcomeDataGet = { // Define la estructura que queremos recibir de la respuesta. 
+  status: number;
+  object: string;
+};
+```
 
 ## Ejercicio 1:
 

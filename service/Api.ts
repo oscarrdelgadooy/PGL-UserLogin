@@ -1,4 +1,4 @@
-import { LoginData, WelcomeDataGet } from "../types/api_types/RegisterType";
+import { LoginData, WelcomeDataGet } from "../types/api_types/ApiTypes";
 import { authStorageService } from "./AuthStorage";
 
 const API_BASE_URL = "http://10.0.2.2:5000";
@@ -24,7 +24,16 @@ const registerUser = async (fullname: string, email: string, pswd: string) => {
   }
 };
 
-const loginUser = async (userData: LoginData): Promise<string> => {
+const loginUser = async (
+  userEmail: string,
+  password: string
+): Promise<string> => {
+  
+  const userData: LoginData = {
+    email: userEmail,
+    pswd: password,
+  };
+
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",

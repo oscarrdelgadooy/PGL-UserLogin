@@ -24,13 +24,13 @@
 ```js
 import React, { useEffect } from "react";
 import { View, Text } from "react-native";
-import { getToken } from "../service/AuthStorage";
 import { router } from "expo-router";
+import { authStorageService } from "../service/AuthStorage";
 
 const AuthChecker = () => {
   useEffect(() => {
     const checkAuth = async () => {
-      const token = await getToken();
+      const token = await authStorageService.getToken();
 
       if (!token) {
         router.replace("/LoginScreen");
