@@ -52,6 +52,8 @@ const welcomeApi = async (): Promise<WelcomeDataGet> => {
 
     const data = await response.json();
 
+    console.log(data);
+
     return { status: data.statusCode, object: data.object };
   } catch (error) {
     console.log(error);

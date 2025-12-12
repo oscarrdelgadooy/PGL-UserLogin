@@ -17,8 +17,6 @@ export default function WelcomeScreen() {
     try {
       const data = await authApiService.welcomeApi();
 
-      console.log(data);
-
       if (data.status == 200) {
         Alert.alert(data.object);
       } else {
