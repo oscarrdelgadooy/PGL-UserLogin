@@ -33,23 +33,24 @@ export default function LoginScreen() {
     };
 
     try {
-      const token = await authApiService.loginUser(userData);
+      const [token, setToken] = useState("");
+
+      setToken(await authApiService.loginUser(userData));
 
       console.log("Respuesta login:", token);
 
-      if (token == null) {
+      if (token == "" || token == null) {
         Alert.alert("error", `Not logged, invalid user or password.`);
         return;
       }
 
-        await authStorageService.saveToken(token);
-        Alert.alert("Succesful", `Logged! Your token: \n${token}`);
+      await authStorageService.saveToken(token);
+      Alert.alert("Succesful", `Logged! Your token: \n${token}`);
 
-        setEmail("");
-        setPassword("");
+      setEmail("");
+      setPassword("");
 
-        router.push("./(drawer)/welcome");
-
+      router.push("./(drawer)/welcome");
     } catch (error) {
       console.log(error);
     }

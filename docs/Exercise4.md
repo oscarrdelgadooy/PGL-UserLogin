@@ -1,63 +1,13 @@
-# 📘 README — Modificar el Drawer
+# 📘 README — Cierre de sesión
 
-Ya implementamos el Drawer en el primer ejercicio de esta práctica.
-
-Para poner por defecto en el Drawer la pantalla de **Welcome.tsx** hay que hacer unos simples pasos.
-
-Esta es actualmente nuestra estructura del **_layout.tsx** del (drawer):
+Para cerrar la sesión del usuario, he creado un botón en la pantalla welcome. Este botón es simple, llama al service del AuthStorage y borra el token proporcionado por la Api / Servidor. Luego, redirecciono a LoginScreen.
 
 ```js
-import { Drawer } from "expo-router/drawer";
-
-export default function DrawerLayout() {
-  return (
-    <Drawer screenOptions={{ headerTitle: "" }}>
-      <Drawer.Screen
-        name="(tabs)"
-        options={{
-          title: "Portfolio App",
-        }}
-      />
-      <Drawer.Screen
-        name="profile"
-        options={{
-          title: "Perfil",
-        }}
-      />
-    </Drawer>
-  );
-}
+const logOff = async () => {
+    await authStorageService.removeToken();
+    router.replace("/LoginScreen");
+  };
 ```
 
-Para poner principal la pantalla welcome.tsx, hay que ponerla arriba del todo del drawer:
-
-```js
-import { Drawer } from "expo-router/drawer";
-
-export default function DrawerLayout() {
-  return (
-    <Drawer screenOptions={{ headerTitle: "" }}>
-      <Drawer.Screen
-        name="welcome"
-        options={{
-          title: "Welcome",
-        }}
-      />
-      <Drawer.Screen
-        name="(tabs)"
-        options={{
-          title: "Portfolio App",
-        }}
-      />
-    </Drawer>
-  );
-}
-```
-
-Eliminamos el Drawer.Screen innecesario que creamos de ejemplo "profile" y añadimos el primero de todos el welcome, y seguido del (drawer) para que cargue el drawer.
-
-De momento, nuestro Drawer se vería asi:
-
-![alt text](exercise4Pic.png)
 
 [Volver](../README.md)
