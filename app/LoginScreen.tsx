@@ -9,9 +9,9 @@ import {
 import React, { useState } from "react";
 import validator from "validator";
 import { LoginData } from "../types/api_types/RegisterType";
-import { loginUser } from "../service/Api";
 import { router } from "expo-router";
-import { saveToken } from "../service/AuthStorage";
+import { authStorageService } from "../service/AuthStorage";
+import { authApiService } from "../service/Api";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -33,30 +33,23 @@ export default function LoginScreen() {
     };
 
     try {
-      const data = await loginUser(userData);
+      const token = await authApiService.loginUser(userData);
 
-      console.log("Respuesta login:", data);
+      console.log("Respuesta login:", token);
 
-      if (data?.object == null) {
+      if (token == null) {
         Alert.alert("error", `Not logged, invalid user or password.`);
         return;
       }
 
-      if (data?.object.token != null) {
-        await saveToken(data?.object.token);
-        Alert.alert("Succesful", `Logged! Your token: \n${data.object.token}`);
+        await authStorageService.saveToken(token);
+        Alert.alert("Succesful", `Logged! Your token: \n${token}`);
+
         setEmail("");
         setPassword("");
 
         router.push("./(drawer)/welcome");
-      }
 
-      if (data?.object.status === 400) {
-        Alert.alert("Error", "Incorrect data...");
-      }
-      if (data?.object.status === 401) {
-        Alert.alert("Error", "Email or password wrong...");
-      }
     } catch (error) {
       console.log(error);
     }

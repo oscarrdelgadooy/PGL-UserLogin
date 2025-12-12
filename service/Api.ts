@@ -1,8 +1,8 @@
-import { LoginData, LoginResult } from "../types/api_types/RegisterType";
+import { LoginData } from "../types/api_types/RegisterType";
 
 const API_BASE_URL = "http://10.0.2.2:5000";
 
-export const registerUser = async (
+const registerUser = async (
   fullname: string,
   email: string,
   pswd: string
@@ -27,7 +27,7 @@ export const registerUser = async (
   }
 };
 
-export const loginUser = async (userData: LoginData): Promise<LoginResult | null> => {
+const loginUser = async (userData: LoginData): Promise<string> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
@@ -37,9 +37,14 @@ export const loginUser = async (userData: LoginData): Promise<LoginResult | null
 
     const data = await response.json();
 
-    return data;
+    return data.object.token;
   } catch (error) {
     console.log(error);
-    return null;
+    return "";
   }
 };
+
+export const authApiService = {
+  registerUser,
+  loginUser
+}

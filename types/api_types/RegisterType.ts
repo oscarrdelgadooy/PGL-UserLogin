@@ -9,10 +9,3 @@ export type LoginData = {
   pswd: string;
 };
 
-export type LoginResult = {
-  object: {
-    ok: boolean;
-    status: number;
-    token: string;
-  };
-};

@@ -9,7 +9,7 @@ import {
 import React, { useState } from "react";
 import validator from "validator";
 import { router } from "expo-router";
-import { registerUser } from "../service/Api";
+import { authApiService } from "../service/Api";
 
 export default function RegisterScreen() {
   const [fullname, setFullName] = useState("");
@@ -27,7 +27,7 @@ export default function RegisterScreen() {
     }
 
     try {
-      const data = await registerUser(fullname, email, password);
+      const data = await authApiService.registerUser(fullname, email, password);
       if (data.ok) {
         Alert.alert("Succesful", `Account created! Hello ${fullname}!`);
         setFullName("");
