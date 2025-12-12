@@ -9,3 +9,7 @@ export type LoginData = {
   pswd: string;
 };
 
+export type WelcomeDataGet = {
+  status: number;
+  object: string;
+};

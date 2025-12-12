@@ -33,9 +33,7 @@ export default function LoginScreen() {
     };
 
     try {
-      const [token, setToken] = useState("");
-
-      setToken(await authApiService.loginUser(userData));
+      const token = await authApiService.loginUser(userData);
 
       console.log("Respuesta login:", token);
 

@@ -1,6 +1,7 @@
-import { View, Text, Button, StyleSheet, Image } from "react-native";
+import { View, Text, Button, StyleSheet, Image, Alert } from "react-native";
 import { router } from "expo-router";
 import { authStorageService } from "../../service/AuthStorage";
+import { authApiService } from "../../service/Api";
 
 export default function WelcomeScreen() {
   const handleNavigateToPortfolio = () => {
@@ -10,6 +11,20 @@ export default function WelcomeScreen() {
   const logOff = async () => {
     await authStorageService.removeToken();
     router.replace("/LoginScreen");
+  };
+
+  const buttonDisplayToken = async () => {
+    try {
+      const data = await authApiService.welcomeApi();
+
+      console.log(data);
+
+      if (data.status == 200) {
+        Alert.alert(data.object);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -28,6 +43,8 @@ export default function WelcomeScreen() {
       <Button title="Cerrar sesión" onPress={logOff} />
 
       <Button title="Ver mi Portfolio" onPress={handleNavigateToPortfolio} />
+
+      <Button title="Ver mi Token" onPress={buttonDisplayToken} />
     </View>
   );
 }

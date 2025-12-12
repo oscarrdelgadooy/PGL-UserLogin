@@ -1,12 +1,9 @@
-import { LoginData } from "../types/api_types/RegisterType";
+import { LoginData, WelcomeDataGet } from "../types/api_types/RegisterType";
+import { authStorageService } from "./AuthStorage";
 
 const API_BASE_URL = "http://10.0.2.2:5000";
 
-const registerUser = async (
-  fullname: string,
-  email: string,
-  pswd: string
-) => {
+const registerUser = async (fullname: string, email: string, pswd: string) => {
   try {
     const userData = { fullname, email, pswd };
 
@@ -44,7 +41,26 @@ const loginUser = async (userData: LoginData): Promise<string> => {
   }
 };
 
+const welcomeApi = async (): Promise<WelcomeDataGet> => {
+  try {
+    const token = await authStorageService.getToken();
+
+    const response = await fetch(`${API_BASE_URL}/welcome`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = await response.json();
+
+    return { status: data.statusCode, object: data.object };
+  } catch (error) {
+    console.log(error);
+    return { status: 404, object: "Encontradon't" };
+  }
+};
+
 export const authApiService = {
   registerUser,
-  loginUser
-}
+  loginUser,
+  welcomeApi,
+};
