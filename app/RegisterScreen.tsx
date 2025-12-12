@@ -10,10 +10,9 @@ import React, { useState } from "react";
 import validator from "validator";
 import { router } from "expo-router";
 import { registerUser } from "../service/Api";
-import { RegisterData } from "../types/api_types/RegisterType";
 
 export default function RegisterScreen() {
-  const [fullName, setFullName] = useState("");
+  const [fullname, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -27,27 +26,20 @@ export default function RegisterScreen() {
       return;
     }
 
-    const userData: RegisterData = {
-      fullname: fullName,
-      email,
-      pswd: password,
-    };
-
     try {
-      const data = await registerUser(userData);
+      const data = await registerUser(fullname, email, password);
       if (data.ok) {
-        Alert.alert("Succesful", `Account created! Hello ${fullName}!)`);
+        Alert.alert("Succesful", `Account created! Hello ${fullname}!`);
         setFullName("");
         setEmail("");
         setPassword("");
         router.push("./LoginScreen");
-      }
-      if (data.status === 400) {
+      }else if (data.status === 400) {
         Alert.alert("Error", "Incorrect data...");
-      }
-      if (data.status === 409) {
+      }else if (data.status === 409) {
         Alert.alert("Error", "Email already exists...");
       }
+
     } catch (error) {
       console.log(error);
     }
@@ -63,7 +55,7 @@ export default function RegisterScreen() {
       <Text style={styles.label}>FullName</Text>
       <TextInput
         style={styles.input}
-        value={fullName}
+        value={fullname}
         onChangeText={setFullName}
       />
       <Text style={styles.label}>Email</Text>

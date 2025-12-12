@@ -34,18 +34,19 @@ export default function LoginScreen() {
 
     try {
       const data = await loginUser(userData);
-      if (data.ok) {
+
+      if (data?.object.token != null) {
         Alert.alert("Succesful", `Logged!`);
         setEmail("");
         setPassword("");
         router.push("./(drawer)/welcome");
 
-        await saveToken(email, data.data.token);
+        await saveToken(data?.object.token );
       }
-      if (data.status === 400) {
+      if (data?.object.status === 400) {
         Alert.alert("Error", "Incorrect data...");
       }
-      if (data.status === 401) {
+      if (data?.object.status === 401) {
         Alert.alert("Error", "Email or password wrong...");
       }
     } catch (error) {

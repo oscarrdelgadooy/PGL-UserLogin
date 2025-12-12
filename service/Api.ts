@@ -1,9 +1,15 @@
-import { LoginData, RegisterData } from "../types/api_types/RegisterType";
+import { LoginData, LoginResult } from "../types/api_types/RegisterType";
 
-const API_BASE_URL = "http://IP_DEL_PROFESOR";
+const API_BASE_URL = "http://10.0.2.2:5000";
 
-export const registerUser = async (userData: RegisterData) => {
+export const registerUser = async (
+  fullname: string,
+  email: string,
+  pswd: string
+) => {
   try {
+    const userData = { fullname, email, pswd };
+
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -12,13 +18,18 @@ export const registerUser = async (userData: RegisterData) => {
 
     const data = await response.json();
 
+    console.log(data);
+
     return { ok: response.ok, status: response.status, data };
   } catch (error) {
+    console.log(error);
     return { ok: false, status: 0, data: { message: "Error de conexión" } };
   }
 };
 
-export const loginUser = async (userData: LoginData) => {
+export const loginUser = async (
+  userData: LoginData
+): Promise<LoginResult | undefined> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
@@ -28,8 +39,8 @@ export const loginUser = async (userData: LoginData) => {
 
     const data = await response.json();
 
-    return { ok: response.ok, status: response.status, data };
+    return data;
   } catch (error) {
-    return { ok: false, status: 0, data: { message: "Error de conexión" } };
+    console.log(error);
   }
 };
