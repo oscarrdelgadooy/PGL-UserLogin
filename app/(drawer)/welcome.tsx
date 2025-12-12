@@ -21,6 +21,8 @@ export default function WelcomeScreen() {
 
       if (data.status == 200) {
         Alert.alert(data.object);
+      } else {
+        console.log("Token expirado o no encontrado.");
       }
     } catch (error) {
       console.log(error);
