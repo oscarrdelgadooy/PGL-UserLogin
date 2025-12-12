@@ -5,7 +5,7 @@ import { authApiService } from "../../service/Api";
 
 export default function WelcomeScreen() {
   const handleNavigateToPortfolio = () => {
-    router.replace("/RegisterScreen");
+    router.replace("/(drawer)/(tabs)/user-info");
   };
 
   const logOff = async () => {
